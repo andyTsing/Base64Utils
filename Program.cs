@@ -6,11 +6,13 @@ public static class Base64Utils
 
     private static string CharString = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 
-    static public string ToBase64(string input)
+    public static string ToBase64(string input)
     {
+        //Convert string to array of bytes
+        //shift bits to proper encoded format
         byte[] data = Encoding.Default.GetBytes(input);
         StringBuilder result = new StringBuilder((data.Length * 4) / 3);
-
+        
         int b;
         for (int i = 0; i < data.Length; i += 3)
         {
@@ -48,18 +50,21 @@ public static class Base64Utils
     }
 
 
-    private static string FromBase64(string input)
+    public static string FromBase64(string input)
     {
         if (input.Length % 4 != 0)
         {
             throw new ArgumentOutOfRangeException("Invalid Input!!");
         }
+        //Get length of the string to be decoded, minus the padding at the end.
         byte[] decoded = new byte[((input.Length * 3) / 4) - (input.IndexOf('=') > 0 ? (input.Length - input.IndexOf('=')) : 0)];
         char[] inChars = input.ToCharArray();
         int j = 0;
         int[] b = new int[4];
         for (int i = 0; i < inChars.Length; i += 4)
         {
+            //Get the position of char in char string to convert and save it in a temporary variable.
+            //Shift bits to get decoded char.
             b[0] = CharString.IndexOf(inChars[i]);
             b[1] = CharString.IndexOf(inChars[i + 1]);
             b[2] = CharString.IndexOf(inChars[i + 2]);
@@ -80,7 +85,7 @@ public static class Base64Utils
 
     static void Main(string[] args)
     {
-
+        //Testing encoding and decoding functions.
         string data = "this is a string!!";
         Console.WriteLine(ToBase64(data));
         Console.WriteLine(FromBase64(ToBase64(data)));
